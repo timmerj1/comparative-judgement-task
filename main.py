@@ -5,8 +5,6 @@
 import os
 import numpy as np
 import pandas as pd
-from pdf2image import convert_from_path
-from itertools import permutations
 from psychopy.visual import Window, ImageStim
 from psychopy.visual.shape import ShapeStim
 from psychopy.visual.textbox2 import TextBox2
@@ -30,8 +28,8 @@ rng = np.random.default_rng()
 
 ## Instruction objects
 
-instructions = convert_from_path("instructions2.pdf")
-instruction = ImageStim(win, image=instructions[0])
+instructions = ["instructions/images/instruction0001-" + str(i) + ".png" for i in range(1,23)]
+instruction = ImageStim(win, image=instructions[0], size=(None, 1.7), units='norm')
 spacebar_instruction = TextBox2(win, "Press Spacebar to Continue", letterHeight=0.05,
                                 alignment='center', color="black", pos=(0, -0.7),
                                 units='norm', font="Liberation Serif", size=(None, 0.06))
@@ -39,10 +37,10 @@ spacebar_instruction = TextBox2(win, "Press Spacebar to Continue", letterHeight=
 
 ## Key Guides
 
-key_guide_d = TextBox2(win, "D", pos=(-0.6, -0.2), units='norm', letterHeight=0.05,
+key_guide_d = TextBox2(win, "D", pos=(-0.5, -0.7), units='norm', letterHeight=0.05,
                        alignment='center', color="black", font="Liberation Serif",
                        size=(None, 0.06))
-key_guide_k = TextBox2(win, "K", pos=(0.6, -0.2), units='norm', letterHeight=0.05,
+key_guide_k = TextBox2(win, "K", pos=(0.5, -0.7), units='norm', letterHeight=0.05,
                        alignment='center', color="black", font="Liberation Serif",
                        size=(None, 0.06))
 
@@ -52,18 +50,18 @@ guides = [key_guide_d, key_guide_k]
 ## Citrus Images (Practice)
 
 citrus_files = ["stimuli/citrus/" + file for file in os.listdir("stimuli/citrus")]
-left_image = ImageStim(win, image=citrus_files[0], pos=(-0.35, -0.2), units='norm',
-                       size=(0.35, None))
+left_image = ImageStim(win, image=citrus_files[0], pos=(-0.5, -0.2), units='norm',
+                       size=(0.5, None))
 left_border = ShapeStim(win, vertices=left_image.verticesPix, units="pix", 
                         lineColor=(0,0,1), fillColor=None, colorSpace='rgb')
-left_caption = TextBox2(win, "CITRUS FRUIT A", pos=(-0.35, 0.2), units='norm', 
+left_caption = TextBox2(win, "CITRUS FRUIT A", pos=(-0.5, 0.3), units='norm', 
                         letterHeight=0.05, alignment='center', color="black", 
                         font="Liberation Serif", size=(None, 0.06))
-right_image = ImageStim(win, image=citrus_files[1], pos=(0.35, -0.2), units='norm',
-                        size=(0.35, None))
+right_image = ImageStim(win, image=citrus_files[1], pos=(0.5, -0.2), units='norm',
+                        size=(0.5, None))
 right_border = ShapeStim(win, vertices=right_image.verticesPix, units="pix", 
                          lineColor=(0,0,1), fillColor=None, colorSpace='rgb')
-right_caption = TextBox2(win, "CITRUS FRUIT B", pos=(0.35, 0.2), units='norm', 
+right_caption = TextBox2(win, "CITRUS FRUIT B", pos=(0.5, 0.3), units='norm', 
                          letterHeight=0.05, alignment='center', color="black", 
                          font="Liberation Serif",size=(None, 0.06))
 
@@ -114,7 +112,7 @@ if citrus_run:
     for file in range(3):
         if citrus_pairs[file][0] == citrus_pairs[file][1]:
             keylist = ["q"]
-            citrus_question.text = "Press Q"
+            citrus_question.text = "This is an attention check, please press Q"
         else:
             keylist = ["d", "k"]
             citrus_question.text = "Which of the two citrus fruits do YOU LIKE MORE?"
@@ -123,43 +121,49 @@ if citrus_run:
         [image.draw() for image in images]
         [guide.draw() for guide in guides]
         win.flip()
-        clock.reset()
+        kb.clock.reset()
         press = kb.waitKeys(maxWait=max_wait, keyList=keylist, waitRelease=False,
                             clear=True)
         if press == None:
+            choice = "timeout"
+            rt = max_wait
             citrus_timeout.draw()
             win.flip()
             wait(2)
-            left_image.setImage(citrus_pairs[file][0])
-            right_image.setImage(citrus_pairs[file][1])
-            [image.draw() for image in images]
-            [guide.draw() for guide in guides]
-            win.flip()
-            clock.reset()
-            press = kb.waitKeys(keyList=keylist, waitRelease=False)
         elif press[-1].name == "d":
+            choice = "d"
+            rt = press[-1].rt
             left_border.draw()
             [image.draw() for image in images]
             [guide.draw() for guide in guides]
             win.flip()
             wait(0.3)
         elif press[-1].name == "k":
+            choice = "k"
+            rt = press[-1].rt
             right_border.draw()
             [image.draw() for image in images]
             [guide.draw() for guide in guides]
             win.flip()
             wait(0.3)
         else:
+            choice = "q"
+            rt = press[-1].rt
             left_border.draw()
             right_border.draw()
             [image.draw() for image in images]
             [guide.draw() for guide in guides]
             win.flip()
             wait(0.3)
-        # data = pd.DataFrame({"id": participant_ID, "condition": condition[0], 
-        #                      "block": "citrus", "trial": file, "stimA": dog_pairs[file][0],
-        #                      "stimB":dog_pairs[file][1], "choice": press[-1].name, "rt": press[-1].rt})
-        # data.to_csv(path)
+        data = pd.DataFrame({"id": [participant_ID], "condition": [condition[0]], 
+                             "block": ["citrus"], "trial": [file], "stimA": [citrus_pairs[file][0]],
+                             "stimB":[citrus_pairs[file][1]], "choice": [choice],
+                             "rt": [rt]})
+        if file == 0:
+            header = True
+        else:
+            header = False
+        data.to_csv(path, mode="a", header = header)
 
     citrus_question.autoDraw = False
 
@@ -167,7 +171,9 @@ if citrus_run:
 
 left_caption.text = "ROBOTIC DOG A"
 right_caption.text = "ROBOTIC DOG B"
-condition_text = ["COMPANIONSHIP", "CARE AND SUPPORT", "SAFETY AND SECURITY"]
+
+condition_text = ["COMPANIONSHIP", "CARE AND SUPPORT", "SECURITY"]
+
 dog_question1_text = f"Imagine you are looking for a robotic dog used for \
 {condition_text[condition[0]]} \n Which of the two robotic dogs do YOU LIKE MORE?"
 dog_question1 = TextBox2(win, dog_question1_text, 
@@ -194,7 +200,7 @@ if main1:
     for file in range(3):
         if dog_pairs[file][0] == dog_pairs[file][1]:
             keylist = ["q"]
-            dog_question1.text = "Press Q"
+            dog_question1.text = "This is an attention check, please press Q"
         else:
             keylist = ["d", "k"]
             dog_question1.text = dog_question1_text
@@ -203,40 +209,44 @@ if main1:
         [image.draw() for image in images]
         [guide.draw() for guide in guides]
         win.flip()
-        clock.reset()
+        kb.clock.reset()
         press = kb.waitKeys(maxWait=max_wait, keyList=keylist, waitRelease=False)
         if press == None:
+            choice = "timeout"
+            rt = max_wait
             dog_timeout.draw()
             win.flip()
             wait(1)
-            [image.draw() for image in images]
-            [guide.draw() for guide in guides]
-            win.flip()
-            clock.reset()
-            press = kb.waitKeys(keyList=keylist, waitRelease=False)
         elif press[-1].name == "d":
+            choice = "d"
+            rt = press[-1].rt
             left_border.draw()
             [image.draw() for image in images]
             [guide.draw() for guide in guides]
             win.flip()
             wait(0.3)
         elif press[-1].name == "k":
+            choice = "k"
+            rt = press[-1].rt
             right_border.draw()
             [image.draw() for image in images]
             [guide.draw() for guide in guides]
             win.flip()
             wait(0.3)
         else:
+            choice = "q"
+            rt = press[-1].rt
             left_border.draw()
             right_border.draw()
             [image.draw() for image in images]
             [guide.draw() for guide in guides]
             win.flip()
             wait(0.3)
-        # data = pd.DataFrame({"id": participant_ID, "condition": condition[0], 
-        #                      "block": "citrus", "trial": file, "stimA": dog_pairs[file][0],
-        #                      "stimB":dog_pairs[file][1], "choice": press[-1].name, "rt": press[-1].rt})
-        # data.to_csv(path)
+        data = pd.DataFrame({"id": [participant_ID], "condition": [condition[0]], 
+                             "block": ["dog1"], "trial": [file], "stimA": [dog_pairs[file][0]],
+                             "stimB":[dog_pairs[file][1]], "choice": [choice],
+                             "rt": [rt]})
+        data.to_csv(path, mode="a", header = False)
     dog_question1.autoDraw = False
 
 
@@ -270,7 +280,8 @@ if main2:
     for file in range(3):
         if dog_pairs[file][0] == dog_pairs[file][1]:
             keylist = ["q"]
-            dog_question2.text = "Press Q"
+            dog_question2.text = "This is an attention check, please press Q"
+
         else:
             keylist = ["d", "k"]
             dog_question2.text = dog_question2_text
@@ -279,40 +290,44 @@ if main2:
         [image.draw() for image in images]
         [guide.draw() for guide in guides]
         win.flip()
-        clock.reset()
+        kb.clock.reset()
         press = kb.waitKeys(maxWait=max_wait, keyList=keylist, waitRelease=False)
         if press == None:
+            choice = "timeout"
+            rt = max_wait
             dog_timeout.draw()
             win.flip()
             wait(1)
-            [image.draw() for image in images]
-            [guide.draw() for guide in guides]
-            win.flip()
-            clock.reset()
-            press = kb.waitKeys(keyList=keylist, waitRelease=False)
         elif press[-1].name == "d":
+            choice = "d"
+            rt = press[-1].rt
             left_border.draw()
             [image.draw() for image in images]
             [guide.draw() for guide in guides]
             win.flip()
             wait(0.3)
         elif press[-1].name == "k":
+            choice = "k"
+            rt = press[-1].rt
             right_border.draw()
             [image.draw() for image in images]
             [guide.draw() for guide in guides]
             win.flip()
             wait(0.3)
         else:
+            choice = "q"
+            rt = press[-1].rt
             left_border.draw()
             right_border.draw()
             [image.draw() for image in images]
             [guide.draw() for guide in guides]
             win.flip()
             wait(0.3)
-        # data = pd.DataFrame({"id": participant_ID, "condition": condition[0], 
-        #                      "block": "citrus", "trial": file, "stimA": dog_pairs[file][0],
-        #                      "stimB":dog_pairs[file][1], "choice": press[-1].name, "rt": press[-1].rt})
-        # data.to_csv(path)
+        data = pd.DataFrame({"id": [participant_ID], "condition": [condition[0]], 
+                             "block": ["dog2"], "trial": [file], "stimA": [dog_pairs[file][0]],
+                             "stimB":[dog_pairs[file][1]], "choice": [choice],
+                             "rt": [rt]})
+        data.to_csv(path, mode="a", header = False)
     dog_question2.autoDraw = False
             
 
@@ -347,7 +362,7 @@ if main3:
     for file in range(3):
         if dog_pairs[file][0] == dog_pairs[file][1]:
             keylist = ["q"]
-            dog_question3.text = "Press Q"
+            dog_question3.text = "This is an attention check, please press Q"
         else:
             keylist = ["d", "k"]
             dog_question3.text = dog_question3_text
@@ -357,18 +372,17 @@ if main3:
         [guide.draw() for guide in guides]
         ref_image.draw()
         win.flip()
-        clock.reset()
+        kb.clock.reset()
         press = kb.waitKeys(maxWait=max_wait, keyList=keylist, waitRelease=False)
         if press == None:
+            choice = "timeout"
+            rt = max_wait
             dog_timeout.draw()
             win.flip()
             wait(1)
-            [image.draw() for image in images]
-            [guide.draw() for guide in guides]
-            win.flip()
-            clock.reset()
-            press = kb.waitKeys(keyList=keylist, waitRelease=False)
         elif press[-1].name == "d":
+            choice = "d"
+            rt = press[-1].rt
             left_border.draw()
             ref_image.draw()
             [image.draw() for image in images]
@@ -376,6 +390,8 @@ if main3:
             win.flip()
             wait(0.3)
         elif press[-1].name == "k":
+            choice = "k"
+            rt = press[-1].rt
             right_border.draw()
             ref_image.draw()
             [image.draw() for image in images]
@@ -383,6 +399,8 @@ if main3:
             win.flip()
             wait(0.3)
         else:
+            choice = "q"
+            rt = press[-1].rt
             left_border.draw()
             right_border.draw()
             ref_image.draw()
@@ -390,10 +408,11 @@ if main3:
             [guide.draw() for guide in guides]
             win.flip()
             wait(0.3)
-        # data = pd.DataFrame({"id": participant_ID, "condition": condition[0], 
-        #                      "block": "citrus", "trial": file, "stimA": dog_pairs[file][0],
-        #                      "stimB":dog_pairs[file][1], "choice": press[-1].name, "rt": press[-1].rt})
-        # data.to_csv(path)
+        data = pd.DataFrame({"id": [participant_ID], "condition": [condition[0]], 
+                             "block": ["dog3"], "trial": [file], "stimA": [dog_pairs[file][0]],
+                             "stimB":[dog_pairs[file][1]], "choice": [press[-1].name],
+                             "rt": [press[-1].rt]})
+        data.to_csv(path, mode="a", header = False)
     dog_question3.autoDraw = False
 
 ## Part 5: Demographics
