@@ -280,26 +280,26 @@ if main1:
         elif press[-1].name == "d":
             choice = "d"
             rt = press[-1].rt
-            left_border.draw()
             [image.draw() for image in images]
             [guide.draw() for guide in guides]
+            left_border.draw()
             win.flip()
             core.wait(0.3)
         elif press[-1].name == "k":
             choice = "k"
             rt = press[-1].rt
-            right_border.draw()
             [image.draw() for image in images]
             [guide.draw() for guide in guides]
+            right_border.draw()
             win.flip()
             core.wait(0.3)
         else:
             choice = "q"
             rt = press[-1].rt
-            left_border.draw()
-            right_border.draw()
             [image.draw() for image in images]
             [guide.draw() for guide in guides]
+            left_border.draw()
+            right_border.draw()
             win.flip()
             core.wait(0.3)
         data = pd.DataFrame({"id": [participant_ID], "condition": [condition[0]], 
