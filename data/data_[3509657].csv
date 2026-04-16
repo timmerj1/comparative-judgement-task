@@ -1,0 +1,13 @@
+,id,condition,block,trial,stimA,stimB,choice,rt
+0,[3509657],2,citrus,0,stimuli/citrus/1.png,stimuli/citrus/6.png,d,2.018828499999927
+0,[3509657],2,citrus,1,stimuli/citrus/6.png,stimuli/citrus/3.png,k,1.0547119000002567
+0,[3509657],2,citrus,2,stimuli/citrus/4.png,stimuli/citrus/1.png,d,0.9591043999998874
+0,[3509657],2,dog1,0,stimuli/dogs/dog7.png,stimuli/dogs/dog3.png,k,1.337210000000141
+0,[3509657],2,dog1,1,stimuli/dogs/dog1.png,stimuli/dogs/dog8.png,d,0.9975619000001643
+0,[3509657],2,dog1,2,stimuli/dogs/dog1.png,stimuli/dogs/dog6.png,d,0.9827837999996518
+0,[3509657],2,dog2,0,stimuli/dogs/dog4.png,stimuli/dogs/dog5.png,k,1.850712200000089
+0,[3509657],2,dog2,1,stimuli/dogs/dog4.png,stimuli/dogs/dog4.png,timeout,4
+0,[3509657],2,dog2,2,stimuli/dogs/dog5.png,stimuli/dogs/dog1.png,d,2.9825049999999464
+0,[3509657],2,dog3,0,stimuli/dogs/dog1.png,stimuli/dogs/dog7.png,k,1.668853399999989
+0,[3509657],2,dog3,1,stimuli/dogs/dog1.png,stimuli/dogs/dog6.png,k,1.045136100000036
+0,[3509657],2,dog3,2,stimuli/dogs/dog6.png,stimuli/dogs/dog8.png,k,1.3702906000003168

@@ -20,10 +20,10 @@ mouse = Mouse()
 kb = Keyboard()
 clock = core.Clock()
 rng = np.random.default_rng()
-font = 'Liberation Serif'
+font = 'Times New Roman'
 
 ## Experiment Settings
-def screen_input(question: str):
+def screen_input(question: str, sona = False):
     typed_text = ''
     text_completed = False
     question_box = TextBox2(win, question, color='black', letterHeight=0.05,
@@ -44,11 +44,14 @@ def screen_input(question: str):
             win.close()
             core.quit()
         elif pressed[-1].name == 'return':
-            text_completed = True
+            if len(typed_text) == 5 or sona is False:
+                text_completed = True
         elif pressed[-1].name == 'space':
             typed_text = typed_text + " "
         elif pressed[-1].name == 'backspace':
             typed_text = typed_text[:-1]
+        elif "num_" in pressed[-1].name:
+            typed_text = typed_text + pressed[-1].name.replace("num_", "")
         else:
             typed_text = typed_text + pressed[-1].name
         show_text.text = typed_text
@@ -59,7 +62,7 @@ def screen_input(question: str):
         win.flip()
     return typed_text
 
-participant_ID = screen_input("Participant ID: ")
+participant_ID = screen_input("Participant ID: ", sona=True)
 condition = np.random.choice([0,1,2], size=1)
 path = f"data/data_{participant_ID}.csv"
 df = pd.DataFrame(columns=["id", "block", "trial", "stimA", "stimB", "choice"])
@@ -211,6 +214,7 @@ if citrus_run:
                              "block": ["citrus"], "trial": [file], "stimA": [citrus_pairs[file][0]],
                              "stimB":[citrus_pairs[file][1]], "choice": [choice],
                              "rt": [rt]})
+        df = pd.concat([df, data])
         if file == 0:
             header = True
         else:
@@ -231,7 +235,7 @@ dog_question1_text = f"Imagine you are looking for a robotic dog used for \
 dog_question1 = TextBox2(win, dog_question1_text, 
                          pos=(0, 0.7), units='norm', letterHeight=0.05,
                          alignment='center', color="black",
-                         font=font, size=(None, 0.18), borderColor='black')
+                         font=font, size=(None, 0.22), borderColor='black')
 
 instruction_numbers = [5, 6 + condition[0], 9, 10, 11]
 
@@ -244,7 +248,7 @@ if main1:
         instruction.setImage(instructions[i])
         instruction.draw()
         win.flip()
-        core.wait(3)
+        core.wait(5)
         instruction.draw()
         spacebar_instruction.draw()
         win.flip()
@@ -306,6 +310,8 @@ if main1:
                              "block": ["dog1"], "trial": [file], "stimA": [dog_pairs[file][0]],
                              "stimB":[dog_pairs[file][1]], "choice": [choice],
                              "rt": [rt]})
+
+        df = pd.concat([df, data])
         data.to_csv(path, mode="a", header = False)
     dog_question1.autoDraw = False
 
@@ -324,7 +330,7 @@ dog_question2_text = f"Imagine you are looking for a robotic dog used for \
 dog_question2 = TextBox2(win, dog_question2_text, 
                          pos=(0, 0.7), units='norm', letterHeight=0.05,
                          alignment='center', color="black",
-                         font=font, size=(None, 0.18), borderColor='black')
+                         font=font, size=(None, 0.22), borderColor='black')
 
 main2 = True
 if main2:
@@ -395,6 +401,8 @@ if main2:
                              "block": ["dog2"], "trial": [file], "stimA": [dog_pairs[file][0]],
                              "stimB":[dog_pairs[file][1]], "choice": [choice],
                              "rt": [rt]})
+
+        df = pd.concat([df, data])
         data.to_csv(path, mode="a", header = False)
     dog_question2.autoDraw = False
             
@@ -413,7 +421,7 @@ dog_question3_text = "Your task is to decide which of the two robotic dogs is " 
 dog_question3 = TextBox2(win, dog_question3_text, 
                          pos=(0, 0.8), units='norm', letterHeight=0.05,
                          alignment='center', color="black",
-                         font=font, size=(None, 0.18), 
+                         font=font, size=(None, 0.2),
                          borderColor='black')
 
 main3 = True
@@ -483,16 +491,16 @@ if main3:
             core.wait(0.3)
         data = pd.DataFrame({"id": [participant_ID], "condition": [condition[0]], 
                              "block": ["dog3"], "trial": [file], "stimA": [dog_pairs[file][0]],
-                             "stimB":[dog_pairs[file][1]], "choice": [press[-1].name],
-                             "rt": [press[-1].rt]})
+                             "stimB":[dog_pairs[file][1]], "choice": [choice],
+                             "rt": [rt]})
+
+        df = pd.concat([df, data])
         data.to_csv(path, mode="a", header = False)
     dog_question3.autoDraw = False
 
 ## Part 5: Demographics
 
-data = pd.read_csv(path)
-
-data['age'] = screen_input("Please input your age:")
+df['age'] = screen_input("Please input your age:")
 
 ## Gender
 
@@ -528,7 +536,7 @@ while done == False:
     [box.draw() for box in boxes]
     win.flip()
     if mouse.isPressedIn(male_box, buttons=[0]):
-        data['gender'] = "male"
+        df['gender'] = "male"
         male_box.fillColor = 'lightBlue'
         gender_instruction.draw()
         [box.draw() for box in boxes]
@@ -536,7 +544,7 @@ while done == False:
         core.wait(0.2)
         done = True
     elif mouse.isPressedIn(female_box, buttons=[0]):
-        data['gender'] = "female"
+        df['gender'] = "female"
         female_box.fillColor = 'lightBlue'
         gender_instruction.draw()
         [box.draw() for box in boxes]
@@ -544,7 +552,7 @@ while done == False:
         core.wait(0.2)
         done = True
     elif mouse.isPressedIn(neither_box, buttons=[0]):
-        data['gender'] = "X"
+        df['gender'] = "X"
         neither_box.fillColor = 'lightBlue'
         gender_instruction.draw()
         [box.draw() for box in boxes]
@@ -613,8 +621,8 @@ while done is False:
     elif kb.getKeys(keyList='return') and not None in slider_values:
         done = True
 
-data['familiarity'] = slider_values[0]
-data['familiarity_health'] = slider_values[1]
+df['familiarity'] = slider_values[0]
+df['familiarity_health'] = slider_values[1]
 
 likert_instruction.text = "Please indicate how strongly you agree or  disagree " \
 "with these statements by dragging and dropping the round markers."
@@ -673,10 +681,10 @@ while done is False:
     elif kb.getKeys(keyList='return') and not None in slider_values:
         done = True
 
-data['uniqueness_1'] = slider_values[0]
-data['uniqueness_2'] = slider_values[1]
-data['uniqueness_3'] = slider_values[2]
-data['uniqueness_4'] = slider_values[3]
+df['uniqueness_1'] = slider_values[0]
+df['uniqueness_2'] = slider_values[1]
+df['uniqueness_3'] = slider_values[2]
+df['uniqueness_4'] = slider_values[3]
 
 for slider in sliders:
     slider.reset()
@@ -711,12 +719,12 @@ ending = TextBox2(win, "Thank you for completing this experiment!\n" \
                   "that you are finished.", font=font, letterHeight=0.05, 
                   color = 'black', alignment='center')
 
-data['anxiety_1'] = slider_values[0]
-data['anxiety_2'] = slider_values[1]
-data['anxiety_3'] = slider_values[2]
-data['anxiety_4'] = slider_values[3]
+df['anxiety_1'] = slider_values[0]
+df['anxiety_2'] = slider_values[1]
+df['anxiety_3'] = slider_values[2]
+df['anxiety_4'] = slider_values[3]
 
-data.to_csv(path, mode = 'w')
+df.to_csv(path, mode = 'w')
 
 ending.draw()
 win.flip()
