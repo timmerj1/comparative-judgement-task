@@ -208,3 +208,5 @@ __marimo__/
 
 .pdf2image.py
 textentry.py
+data/
+!data/data_00000.csv
