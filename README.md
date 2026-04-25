@@ -9,4 +9,4 @@ cd Z:/comparative-judgement-task
 git pull
 ```
 
-pasting is not possible with ctrl+p, so use the right mouse button to paste (or check what key combination you need, it's something like shift+insert if I remember correctly).
+pasting is not possible with Ctrl+P, so use the right mouse button to paste (or check what key combination you need, it's something like Shift+Ins if I remember correctly).
