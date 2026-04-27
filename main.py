@@ -63,7 +63,8 @@ def screen_input(question: str, sona = False):
     return typed_text
 
 participant_ID = screen_input("Participant ID: ", sona=True)
-condition = np.random.choice([0,1,2], size=1)
+# condition = np.random.choice([0,1,2], size=1)
+condition = [0]
 path = f"data/data_{participant_ID}.csv"
 df = pd.DataFrame(columns=["id", "block", "trial", "stimA", "stimB", "choice"])
 
