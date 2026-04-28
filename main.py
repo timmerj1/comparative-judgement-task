@@ -79,7 +79,7 @@ spacebar_instruction = TextBox2(win, "Press SPACE to Continue", letterHeight=0.0
                                 units='norm', font=font, 
                                 size=(None, 0.06))
 instruction_time = 3
-instruction_time_long = 10
+instruction_time_long = 15
 
 ## Key Guides
 
