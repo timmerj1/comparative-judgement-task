@@ -232,7 +232,6 @@ if citrus_run:
             header = False
         data.to_csv(path, mode="a", header = header, index = False)
 
-    citrus_question.autoDraw = False
 
 ## Part 2: Arm Liking (Main Task 1)
 
@@ -336,7 +335,6 @@ if main1:
 
         df = pd.concat([df, data])
         data.to_csv(path, mode="a", header = False, index = False)
-    arm_question1.autoDraw = False
 
 
 ## Part 3: Arm Eeriness (Main Task 2)
@@ -367,7 +365,6 @@ if main2:
             win.close()
             core.quit()()
 
-    arm_question2.autoDraw = True
     for file in range(len(arm_pairs)):
         if arm_pairs[file][0] == arm_pairs[file][1]:
             keylist = ["q", "escape"]
@@ -425,7 +422,6 @@ if main2:
                              "rt": [rt]})
         df = pd.concat([df, data])
         data.to_csv(path, mode="a", header = False, index = False)
-    arm_question2.autoDraw = False
 
 ## Part 4: Arm comparison (Main Task 3)
 
@@ -537,7 +533,6 @@ if main3:
 
         df = pd.concat([df, data])
         data.to_csv(path, mode="a", header = False, index = False)
-    arm_question3.autoDraw = False
 
 ## Part 5: Demographics (END)
 
@@ -555,7 +550,7 @@ if press[-1].name == "escape":
     win.close()
     core.quit()
 
-win.close()
 open_new("https://uva.fra1.qualtrics.com/jfe/form/SV_26lJCoqTzq0hZSm")
+win.close()
 df.to_csv("data/experiment_data.csv", mode = "a", header = False, index = False)
 core.quit()
