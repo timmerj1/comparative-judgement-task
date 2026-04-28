@@ -78,8 +78,8 @@ spacebar_instruction = TextBox2(win, "Press SPACE to Continue", letterHeight=0.0
                                 alignment='center', color="black", pos=(0, -0.7),
                                 units='norm', font=font, 
                                 size=(None, 0.06))
-instruction_time = 0
-instruction_time_long = 0
+instruction_time = 3
+instruction_time_long = 10
 
 ## Key Guides
 
