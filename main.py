@@ -147,7 +147,7 @@ attention_check = TextBox2(win, "This is an attention check, please press Q",
 citrus_question = TextBox2(win, "Which of the two citrus fruits do YOU LIKE MORE?", 
                            pos=(0, 0.7), units='norm', letterHeight=0.05,
                            alignment='center', color="black",
-                           font=font, size=(None, 0.06), borderColor='black')
+                           font=font, size=(None, 0.2), borderColor='black')
 
 timeout_message = TextBox2(win,
                            "You have not yet responded, we really care about your response!",
