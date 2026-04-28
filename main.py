@@ -126,7 +126,7 @@ np.random.shuffle(citrus_pairs)
 ## Arm Images (Main Task)
 
 arm_files = ["stimuli/arms/arm" + str(i) + ".png" for i in range(1,10)]
-ref_image = ImageStim(win, image="stimuli/arms/arm_reference.png", pos=(0, 0.3),
+ref_image = ImageStim(win, image="stimuli/arms/arm_reference.png", pos=(0, 0.2),
                       units='norm', size=(0.35, None))
 arm_pairs = [np.random.choice([arm_files[x], arm_files[y]], 2, replace=False) \
                 for y in range(len(arm_files)) \
@@ -430,12 +430,12 @@ if main2:
 ## Part 4: Arm comparison (Main Task 3)
 
 # Recreate images to set new size
-left_image = ImageStim(win, image=arm_files[0], pos=(-0.5, -0.2), units='norm',
+left_image = ImageStim(win, image=arm_files[0], pos=(-0.5, -0.1), units='norm',
                        size=(0.5, None))
 left_border = ShapeStim(win, vertices=left_image.verticesPix, units="pix", 
                         lineColor=(0,0,1), fillColor=None, colorSpace='rgb',
                         lineWidth=4)
-right_image = ImageStim(win, image=arm_files[1], pos=(0.5, -0.2), units='norm',
+right_image = ImageStim(win, image=arm_files[1], pos=(0.5, -0.1), units='norm',
                         size=(0.5, None))
 right_border = ShapeStim(win, vertices=right_image.verticesPix, units="pix", 
                          lineColor=(0,0,1), fillColor=None, colorSpace='rgb', 
@@ -443,8 +443,8 @@ right_border = ShapeStim(win, vertices=right_image.verticesPix, units="pix",
 
 left_caption.text = "ROBOTIC ARM A"
 right_caption.text = "ROBOTIC ARM B"
-left_caption.pos -= (0, 0.05)
-right_caption.pos -= (0, 0.05)
+left_caption.pos -= (0, 0.1)
+right_caption.pos -= (0, 0.1)
 
 # Reset images
 images = [left_image, right_image, left_caption, right_caption]
