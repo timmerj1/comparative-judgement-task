@@ -140,7 +140,7 @@ np.random.shuffle(arm_pairs)
 attention_check = TextBox2(win, "This is an attention check, please press Q", 
                            pos=(0, 0.7), units='norm', letterHeight=0.05,
                            alignment='center', color="black",
-                           font=font, size=(None, 0.06), borderColor='black')
+                           font=font, size=(None, 0.2), borderColor='black')
 
 ## Part 1: Citrus Block (Practice)
 
@@ -426,12 +426,12 @@ if main2:
 ## Part 4: Arm comparison (Main Task 3)
 
 # Recreate images to set new size
-left_image = ImageStim(win, image=arm_files[0], pos=(-0.5, -0.1), units='norm',
+left_image = ImageStim(win, image=arm_files[0], pos=(-0.5, -0.25), units='norm',
                        size=(0.5, None))
 left_border = ShapeStim(win, vertices=left_image.verticesPix, units="pix", 
                         lineColor=(0,0,1), fillColor=None, colorSpace='rgb',
                         lineWidth=4)
-right_image = ImageStim(win, image=arm_files[1], pos=(0.5, -0.1), units='norm',
+right_image = ImageStim(win, image=arm_files[1], pos=(0.5, -0.25), units='norm',
                         size=(0.5, None))
 right_border = ShapeStim(win, vertices=right_image.verticesPix, units="pix", 
                          lineColor=(0,0,1), fillColor=None, colorSpace='rgb', 
