@@ -563,7 +563,7 @@ if press[-1].name == "escape":
 end_time = datetime.now()
 df["endTime"] = str(end_time.time())
 
-open_new("https://uva.fra1.qualtrics.com/jfe/form/SV_26lJCoqTzq0hZSm")
+open_new("https://vuamsterdam.eu.qualtrics.com/jfe/form/SV_20rStztHRDUwP66")
 win.close()
 
 main_file = "data/experiment_data.csv"
