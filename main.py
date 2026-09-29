@@ -561,9 +561,17 @@ if press[-1].name == "escape":
     core.quit()
 
 end_time = datetime.now()
+df["endTime"] = str(end_time.time())
+
 open_new("https://uva.fra1.qualtrics.com/jfe/form/SV_26lJCoqTzq0hZSm")
 win.close()
 
-df["endTime"] = str(end_time.time())
-df.to_csv("data/experiment_data.csv", mode = "a", header = False, index = False)
+main_file = "data/experiment_data.csv"
+
+if os.path.isfile(main_file):
+    mode = "a"
+else:
+    mode = "x"
+
+df.to_csv(main_file, mode = mode, header = False, index = False)
 core.quit()
