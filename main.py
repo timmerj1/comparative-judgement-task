@@ -568,12 +568,5 @@ win.close()
 
 main_file = "data/experiment_data.csv"
 
-if os.path.isfile(main_file):
-    mode = "a"
-    header = False
-else:
-    mode = "x"
-    header = True
-
-df.to_csv(main_file, mode = mode, header = header, index = False)
+df.to_csv(main_file, mode = "a", header = False, index = False)
 core.quit()
