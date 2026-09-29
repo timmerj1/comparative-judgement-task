@@ -3,6 +3,7 @@
 
 ## Libraries
 import os
+from datetime import datetime
 import numpy as np
 import pandas as pd
 from webbrowser import open_new
@@ -21,6 +22,9 @@ kb = Keyboard()
 clock = core.Clock()
 rng = np.random.default_rng()
 font = 'Times New Roman'
+start_time = datetime.now()
+start_time.time()
+start_time.date()
 
 ## Experiment Settings
 def screen_input(question: str, sona = False):
@@ -64,9 +68,9 @@ def screen_input(question: str, sona = False):
 
 participant_ID = screen_input("Welcome! Please fill in your SONA ID to start the task:",
                               sona=True)
-condition = [0]
+condition = np.random.choice([1,2], size=1)
 path = f"data/files/data_{participant_ID}.csv"
-df = pd.DataFrame(columns=["id", "block", "trial", "stimA", "stimB", "choice"])
+df = pd.DataFrame(columns=["startTime", "date", "id", "condition", "block", "trial", "stimA", "stimB", "choice", "rt"])
 
 max_wait = 4
 
@@ -128,12 +132,13 @@ np.random.shuffle(citrus_pairs)
 arm_files = ["stimuli/arms/arm" + str(i) + ".png" for i in range(1,10)]
 ref_image = ImageStim(win, image="stimuli/arms/arm_reference.png", pos=(0, 0.2),
                       units='norm', size=(0.35, None))
+# create image pairs and randomize left/right position
 arm_pairs = [np.random.choice([arm_files[x], arm_files[y]], 2, replace=False) \
                 for y in range(len(arm_files)) \
                     for x in range(y + 1, len(arm_files))]
-extra_arms = np.random.choice(arm_files, 1)
-arm_pairs.append([extra_arms[0], extra_arms[0]])
-np.random.shuffle(arm_pairs)
+extra_arms = np.random.choice(arm_files, 1) # pick random image for attention check
+arm_pairs.append([extra_arms[0], extra_arms[0]]) # add attention check
+np.random.shuffle(arm_pairs) # randomize pair order
 
 ## Attention Check Message
 
@@ -155,7 +160,7 @@ timeout_message = TextBox2(win,
 
 citrus_run = True
 if citrus_run:
-    for i in range(1, 5):
+    for i in range(0, 5):
         instruction.setImage(instructions[i])
         instruction.draw()
         win.flip()
@@ -221,7 +226,8 @@ if citrus_run:
             right_border.draw()
             win.flip()
             core.wait(0.3)
-        data = pd.DataFrame({"id": [participant_ID], "condition": [condition[0]], 
+        data = pd.DataFrame({"startTime": [str(start_time.time())], "date": [str(start_time.date())],
+                             "id": [participant_ID], "condition": [condition[0]], 
                              "block": ["citrus"], "trial": [file], "stimA": [citrus_pairs[file][0]],
                              "stimB":[citrus_pairs[file][1]], "choice": [choice],
                              "rt": [rt]})
@@ -259,9 +265,11 @@ arm_question1 = ImageStim(win, "instructions/trial_instructions/arm1_" +
                           str(condition[0]) + ".png", pos=(0, 0.7), 
                           units='norm', size=(None, 0.22))
 
+instruction_numbers = [5, 5 + condition[0], 8, 9, 10]
+
 main1 = True
 if main1:
-    for i in range(5, 10):
+    for i in instruction_numbers:
         instruction.setImage(instructions[i])
         instruction.draw()
         win.flip()
@@ -328,7 +336,8 @@ if main1:
             right_border.draw()
             win.flip()
             core.wait(0.3)
-        data = pd.DataFrame({"id": [participant_ID], "condition": [condition[0]], 
+        data = pd.DataFrame({"startTime": [str(start_time.time())], "date": [str(start_time.date())],
+                             "id": [participant_ID], "condition": [condition[0]], 
                              "block": ["arm1"], "trial": [file], "stimA": [arm_pairs[file][0]],
                              "stimB":[arm_pairs[file][1]], "choice": [choice],
                              "rt": [rt]})
@@ -352,7 +361,7 @@ arm_question2 = ImageStim(win, "instructions/trial_instructions/arm2_" +
 
 main2 = True
 if main2:
-    for i in range(11,13):
+    for i in range(12,14):
         instruction.setImage(instructions[i])
         instruction.draw()
         win.flip()
@@ -416,7 +425,8 @@ if main2:
             right_border.draw()
             win.flip()
             core.wait(0.3)
-        data = pd.DataFrame({"id": [participant_ID], "condition": [condition[0]], 
+        data = pd.DataFrame({"startTime": [str(start_time.time())], "date": [str(start_time.date())],
+                             "id": [participant_ID], "condition": [condition[0]], 
                              "block": ["arm2"], "trial": [file], "stimA": [arm_pairs[file][0]],
                              "stimB":[arm_pairs[file][1]], "choice": [choice],
                              "rt": [rt]})
@@ -452,13 +462,12 @@ extra_arms = np.random.choice(arm_files, 1)
 arm_pairs.append([extra_arms[0], extra_arms[0]])
 np.random.shuffle(arm_pairs)
 
-arm_question3 = ImageStim(win, "instructions/trial_instructions/arm3_" + 
-                          str(condition[0]) + ".png", 
+arm_question3 = ImageStim(win, "instructions/trial_instructions/arm3.png", 
                           pos=(0, 0.7), units='norm', size=(None, 0.22))
 
 main3 = True
 if main3:
-    for i in range(14, 17):
+    for i in range(15, 18):
         instruction.setImage(instructions[i])
         instruction.draw()
         win.flip()
@@ -526,7 +535,8 @@ if main3:
             right_border.draw()
             win.flip()
             core.wait(0.3)
-        data = pd.DataFrame({"id": [participant_ID], "condition": [condition[0]], 
+        data = pd.DataFrame({"startTime": [str(start_time.time())], "date": [str(start_time.date())],
+                             "id": [participant_ID], "condition": [condition[0]], 
                              "block": ["arm3"], "trial": [file], "stimA": [arm_pairs[file][0]],
                              "stimB":[arm_pairs[file][1]], "choice": [choice],
                              "rt": [rt]})
@@ -550,7 +560,10 @@ if press[-1].name == "escape":
     win.close()
     core.quit()
 
+end_time = datetime.now()
 open_new("https://uva.fra1.qualtrics.com/jfe/form/SV_26lJCoqTzq0hZSm")
 win.close()
+
+df["endTime"] = str(end_time.time())
 df.to_csv("data/experiment_data.csv", mode = "a", header = False, index = False)
 core.quit()
