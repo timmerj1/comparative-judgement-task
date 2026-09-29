@@ -2,7 +2,7 @@
 
 PsychoPy experiment for Femke van Horen
 
-To clone into the lab, use 
+To clone into the lab, use
 
 ```bash
 git clone exp2 comparative-judgement-task
@@ -11,7 +11,7 @@ git clone exp2 comparative-judgement-task
 To pull in the lab, use git bash and enter the following code:
 
 ```bash
-cd Z:/comparative-judgement-task
+cd Z:/arm-comparison
 git pull
 ```
 
